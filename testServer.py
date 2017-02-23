@@ -4,6 +4,7 @@ import time
 import logging
 import logging.handlers
 import json
+import base64
 
 ## LOGGING ##
 
@@ -60,5 +61,5 @@ while True:
     details = data.split(sep)
 
     for detail in details:
-        print (detail)
+        print (base64.b64decode(detail))
 

