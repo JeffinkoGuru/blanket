@@ -1,9 +1,13 @@
 # blanket
 Blanket is an easy to use payload encryptor for securely transferring data between distributed applications
 
-## Supports
-![Alt](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png =250x)
-
+## Features
+- AES256 Encrpytion
+- Randomly generated one-time use keys
+- Randomly generated one-time use secrets
+- Randomly generated payload padding and structure
+- Embedded payload signature to prevent man-in-the-middle attacks
+- Self-contained payload
 
 ## Example Usage
 
