@@ -2,7 +2,7 @@
 Blanket is an easy to use payload encryptor for securely transferring data between distributed applications
 
 ## Supports
-![Alt](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png "Title" =x150)
+![Alt](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png =250x)
 
 
 ## Example Usage
