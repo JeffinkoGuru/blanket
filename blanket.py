@@ -67,4 +67,4 @@ class Blanket:
 
         message = decipher.decrypt(details[4])
 
-        print (message)
+        return message

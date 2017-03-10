@@ -5,4 +5,4 @@ encoded = blanket.cover("payload")
 
 print (encoded)
 
-
+print (blanket.uncover(encoded))
