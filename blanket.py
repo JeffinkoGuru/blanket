@@ -31,7 +31,6 @@ class AESCipher:
 class Blanket:
 
     def cover( self, rawMsg ):
-        global sk, vk, vKey, cipher, sig, keyPass, decrypted, message, msg, secretKey
 
         sk = SigningKey.generate(curve=NIST521p)
         vk = sk.get_verifying_key()
@@ -56,7 +55,6 @@ class Blanket:
         return msg
 
     def uncover( self, data ):
-        global sk, vk, vKey, cipher, sig, keyPass, decrypted, message, msg, secretKey
 
         sep = data[0:3]
         details = data.split(sep)
